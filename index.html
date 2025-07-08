@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Architectural Blueprint</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A dashboard-style SPA with persistent left-hand navigation. The structure is organized by technical domain (Architecture, Frontend, Backend, etc.), not by the report's linear chapters. This allows for non-linear exploration and easy comparison between different parts of the stack. The initial view provides a high-level summary with interactive elements that encourage drill-down into specific sections. This hub-and-spoke model is more intuitive for users (like a CTO or lead dev) who want to either get a quick overview or investigate a specific component of the architecture without scrolling through a long document. -->
+    <!-- Visualization & Content Choices: The report's core ideas are transformed into interactive components. 1. Architecture Evolution (Monolith to Microservices): A flexbox-based diagram is used to visually represent this process, as it's a foundational concept. Interaction (clicking a button) triggers a CSS transition to show the evolution, which is more impactful than a static image. 2. Trade-off Analysis (Table 2): An interactive bar chart (Chart.js) allows users to directly compare the two approaches on key criteria. This is more engaging than a static HTML table. 3. Technology Comparisons (e.g., Svelte vs. React): Bar charts (Chart.js) are used to visualize quantitative claims from the report (e.g., performance), making the justification for tech choices clearer. 4. Process Flows (CI/CD Pipeline): An interactive HTML/CSS diagram where users can click on each stage to get more details. This breaks down a complex process into digestible, user-initiated chunks. All interactions are designed to reveal more information on demand, keeping the initial interface clean and uncluttered. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f2; /* Warm Neutral Background */
+            color: #333;
+        }
+        .nav-link {
+            transition: all 0.2s ease-in-out;
+            border-left: 3px solid transparent;
+        }
+        .nav-link.active {
+            background-color: #e9e7e0;
+            color: #1e3a8a; /* A subtle accent blue */
+            border-left-color: #1e3a8a;
+        }
+        .nav-link:hover {
+            background-color: #f1efea;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .tab-button {
+            transition: all 0.2s ease-in-out;
+        }
+        .tab-button.active {
+            background-color: #1e3a8a;
+            color: #ffffff;
+        }
+        .cicd-stage {
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+        .cicd-stage:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .cicd-stage.active {
+            border-color: #1e3a8a;
+            transform: translateY(-2px);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased text-slate-800">
+
+    <div class="flex h-screen bg-[#f8f7f2]">
+        <!-- Sidebar Navigation -->
+        <aside class="w-64 bg-white shadow-md flex-shrink-0">
+            <div class="p-6">
+                <h1 class="text-xl font-bold text-slate-900">Arch. Blueprint</h1>
+                <p class="text-sm text-slate-500 mt-1">Online Booking Platform</p>
+            </div>
+            <nav id="main-nav" class="flex flex-col p-4">
+                <a href="#architecture" class="nav-link active font-medium rounded-md px-4 py-3 text-slate-700">Architecture</a>
+                <a href="#frontend" class="nav-link font-medium rounded-md px-4 py-3 text-slate-700">Front-End</a>
+                <a href="#backend" class="nav-link font-medium rounded-md px-4 py-3 text-slate-700">Back-End & APIs</a>
+                <a href="#data" class="nav-link font-medium rounded-md px-4 py-3 text-slate-700">Data & Persistence</a>
+                <a href="#devops" class="nav-link font-medium rounded-md px-4 py-3 text-slate-700">DevOps & Security</a>
+                <a href="#testing" class="nav-link font-medium rounded-md px-4 py-3 text-slate-700">Testing & QA</a>
+                <a href="#governance" class="nav-link font-medium rounded-md px-4 py-3 text-slate-700">Governance</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12">
+            
+            <!-- Architecture Section -->
+            <section id="architecture" class="content-section active space-y-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900">System Architecture & Deployment</h2>
+                    <p class="mt-2 text-lg text-slate-600 max-w-3xl">This section outlines the foundational design, starting with a pragmatic a Modular Monolith and evolving towards Microservices. This strategy balances initial development speed with long-term scalability and resilience. Explore the diagrams and comparisons below to understand the core architectural decisions.</p>
+                </div>
+
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-1">Architectural Evolution: From Monolith to Microservices</h3>
+                    <p class="text-slate-600 mb-6">The platform begins as a Modular Monolith for speed and simplicity. As it scales, specific modules are extracted into independent Microservices. This interactive diagram illustrates the planned evolution.</p>
+                    <div id="evolution-diagram-container" class="space-y-4">
+                         <div class="flex items-center space-x-4">
+                             <h4 class="text-lg font-semibold text-slate-800">Phase 1: Modular Monolith</h4>
+                             <button id="evolve-btn" class="px-4 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">Show Evolution ➔</button>
+                         </div>
+                         <div class="flex flex-wrap gap-4 p-4 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 relative">
+                             <div class="font-mono text-xs absolute top-2 right-2 text-slate-400">Single Deployable Unit</div>
+                             <div class="evolution-module bg-teal-100 text-teal-800 p-4 rounded-md text-center flex-grow">Bookings</div>
+                             <div class="evolution-module bg-teal-100 text-teal-800 p-4 rounded-md text-center flex-grow">Users</div>
+                             <div class="evolution-module bg-teal-100 text-teal-800 p-4 rounded-md text-center flex-grow">Inventory</div>
+                             <div class="evolution-module bg-teal-100 text-teal-800 p-4 rounded-md text-center flex-grow">Payments</div>
+                             <div id="notifications-module" class="evolution-module bg-teal-100 text-teal-800 p-4 rounded-md text-center flex-grow">Notifications</div>
+                         </div>
+                         <div id="evolution-phase2" class="hidden opacity-0 transition-opacity duration-1000">
+                             <h4 class="text-lg font-semibold text-slate-800 mt-6">Phase 2: Microservices</h4>
+                             <div class="flex flex-wrap gap-4 p-4 border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 mt-4 relative">
+                                  <div class="font-mono text-xs absolute top-2 right-2 text-slate-400">Independent Services</div>
+                                  <div class="evolution-microservice bg-indigo-100 text-indigo-800 p-4 rounded-md text-center flex-grow">Monolith (Core)</div>
+                                  <div id="notifications-microservice" class="evolution-microservice bg-purple-200 text-purple-900 p-4 rounded-md text-center flex-grow ring-2 ring-purple-500">Notifications Service</div>
+                             </div>
+                             <p class="text-sm text-slate-500 mt-2">Example: The 'Notifications' module is extracted into its own microservice to scale independently, triggered by business needs.</p>
+                         </div>
+                    </div>
+                </div>
+
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-1">Interactive Trade-off Analysis</h3>
+                    <p class="text-slate-600 mb-6">The decision to start with a monolith is strategic. Use the buttons to compare the two architectural approaches across key criteria for a startup environment.</p>
+                    <div class="mb-4 flex justify-center space-x-2">
+                        <button data-type="monolith" class="tradeoff-btn tab-button active px-6 py-2 rounded-md font-medium">Modular Monolith</button>
+                        <button data-type="microservices" class="tradeoff-btn tab-button px-6 py-2 rounded-md font-medium">Microservices</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="tradeoffChart"></canvas>
+                    </div>
+                    <div id="tradeoff-explanation" class="mt-4 text-center text-slate-600 p-4 bg-slate-50 rounded-md">
+                        The Modular Monolith provides high initial development velocity and low operational complexity, making it ideal for a startup aiming for a fast time-to-market.
+                    </div>
+                </div>
+
+                 <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Key Infrastructure Choices</h3>
+                    <div class="grid md:grid-cols-3 gap-6 text-center">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                            <div class="text-3xl">☁️</div>
+                            <h4 class="font-semibold mt-2">Google Cloud (GCP)</h4>
+                            <p class="text-sm text-slate-600 mt-1">Chosen for its superior Kubernetes engine (GKE), developer-friendly ecosystem, and predictable pricing.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                             <div class="text-3xl">🚀</div>
+                             <h4 class="font-semibold mt-2">Hybrid Compute</h4>
+                             <p class="text-sm text-slate-600 mt-1">GKE (Kubernetes) for core services and Cloud Run (Serverless) for event-driven, cost-effective background tasks.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                             <div class="text-3xl">🛡️</div>
+                             <h4 class="font-semibold mt-2">Cloudflare</h4>
+                             <p class="text-sm text-slate-600 mt-1">Provides a best-in-class CDN, WAF, and DDoS protection with superior performance and predictable costs.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Frontend Section -->
+            <section id="frontend" class="content-section space-y-12">
+                 <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Front-End Technology</h2>
+                    <p class="mt-2 text-lg text-slate-600 max-w-3xl">The front-end is engineered for a pixel-perfect, mobile-first experience with sub-200ms interaction latencies. The stack is chosen explicitly for performance and developer productivity.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                     <div class="card rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">Framework: SvelteKit + TypeScript</h3>
+                        <p class="text-slate-600 mb-4">Svelte is a compiler that produces highly optimized, minimal vanilla JavaScript. This "disappearing framework" approach results in unparalleled performance and the smallest bundle sizes, which is critical for achieving our latency targets.</p>
+                        <div class="chart-container h-80">
+                            <canvas id="frameworkPerfChart"></canvas>
+                        </div>
+                     </div>
+                     <div class="card rounded-lg p-6">
+                        <h3 class="text-xl font-semibold mb-4">Real-Time Data: SSE</h3>
+                        <p class="text-slate-600 mb-4">For most real-time updates (like live availability), Server-Sent Events (SSE) is superior to WebSockets. SSE is simpler, operates over standard HTTP/2, and has built-in reconnection logic.</p>
+                        <div class="p-4 bg-slate-50 rounded-lg border-l-4 border-blue-500">
+                           <h4 class="font-semibold">Key Advantage: Unidirectional Efficiency</h4>
+                           <p class="text-slate-600 mt-1">Since the server is pushing updates to the client, the unidirectional nature of SSE is more efficient and robust than maintaining a persistent, bidirectional WebSocket connection.</p>
+                        </div>
+                     </div>
+                </div>
+            </section>
+
+            <!-- Backend Section -->
+            <section id="backend" class="content-section space-y-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Back-End & APIs</h2>
+                    <p class="mt-2 text-lg text-slate-600 max-w-3xl">The back-end employs a polyglot strategy, using the best language for the job. The API design is hybrid, leveraging gRPC, GraphQL, and REST for their respective strengths to maximize performance and flexibility.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Polyglot Language Strategy</h3>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="p-4 rounded-lg bg-green-50 border border-green-200">
+                            <h4 class="font-semibold text-green-800">Go (Gin) for Performance</h4>
+                            <p class="text-sm text-green-700 mt-1">Used for performance-critical services like the core booking engine and availability checks. Go's compiled nature and efficient concurrency deliver the lowest possible latency.</p>
+                        </div>
+                        <div class="p-4 rounded-lg bg-sky-50 border border-sky-200">
+                             <h4 class="font-semibold text-sky-800">Node.js (NestJS) for Productivity</h4>
+                             <p class="text-sm text-sky-700 mt-1">Used for general-purpose, I/O-bound APIs. The vast NPM ecosystem and shared TypeScript language with the front-end accelerate development significantly.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Hybrid API Design</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-slate-50 rounded-lg text-center">
+                            <div class="font-bold text-lg">gRPC</div>
+                            <div class="text-sm text-slate-500 my-2">Internal Service-to-Service</div>
+                            <p class="text-sm text-slate-600">Highest performance via HTTP/2 and Protocol Buffers. Ensures low-latency communication between microservices.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg text-center ring-2 ring-blue-500">
+                             <div class="font-bold text-lg">GraphQL</div>
+                             <div class="text-sm text-slate-500 my-2">Public Data API (Web/Mobile)</div>
+                             <p class="text-sm text-slate-600">Maximum flexibility for clients to request exactly the data they need, preventing over/under-fetching.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg text-center">
+                             <div class="font-bold text-lg">REST</div>
+                             <div class="text-sm text-slate-500 my-2">Actions & Webhooks</div>
+                             <p class="text-sm text-slate-600">Simplicity and industry standard for state-changing actions and receiving webhooks from third parties like Stripe.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Data Section -->
+            <section id="data" class="content-section space-y-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Data & Persistence</h2>
+                    <p class="mt-2 text-lg text-slate-600 max-w-3xl">The data layer is built on a distributed SQL database to ensure transactional integrity at scale, complemented by a high-performance caching layer and a robust analytics pipeline.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Primary Datastore: Why CockroachDB?</h3>
+                    <p class="text-slate-600 mb-6">Traditional databases present a trade-off: SQL offers consistency but is hard to scale, while NoSQL scales easily but often sacrifices transactional integrity. CockroachDB (a "NewSQL" database) provides the best of both worlds.</p>
+                    <div class="chart-container h-80">
+                         <canvas id="databaseChart"></canvas>
+                    </div>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Analytics & Search Pipeline</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 p-4 bg-slate-50 rounded-lg">
+                        <div class="text-center">
+                            <div class="font-semibold">Kafka</div>
+                            <div class="text-sm text-slate-500">Event Ingestion</div>
+                        </div>
+                        <div class="text-2xl text-slate-400">➔</div>
+                        <div class="text-center">
+                             <div class="font-semibold">Elasticsearch</div>
+                             <div class="text-sm text-slate-500">Full-Text Search</div>
+                        </div>
+                        <div class="text-2xl text-slate-400">➔</div>
+                        <div class="text-center">
+                             <div class="font-semibold">Google Cloud Storage</div>
+                             <div class="text-sm text-slate-500">Data Lake</div>
+                        </div>
+                         <div class="text-2xl text-slate-400">➔</div>
+                        <div class="text-center">
+                             <div class="font-semibold">BigQuery</div>
+                             <div class="text-sm text-slate-500">BI & Analytics</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600 mt-4">All application events are streamed via Kafka into a central pipeline. This decouples analytics from the main application and enables powerful business intelligence, full-text search, and future machine learning capabilities.</p>
+                </div>
+            </section>
+
+            <!-- DevOps Section -->
+            <section id="devops" class="content-section space-y-12">
+                 <div>
+                    <h2 class="text-3xl font-bold text-slate-900">DevOps, Monitoring & Security</h2>
+                    <p class="mt-2 text-lg text-slate-600 max-w-3xl">A modern, automated DevOps practice is crucial for reliability and speed. The entire infrastructure is managed as code, with a CI/CD pipeline that embeds security and progressive delivery.</p>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-1">Interactive CI/CD Pipeline</h3>
+                    <p class="text-slate-600 mb-6">Every code change automatically triggers a secure and reliable pipeline, moving from commit to a progressive production deployment. Click on a stage to see the tools and processes involved.</p>
+                    <div id="cicd-pipeline" class="flex flex-col md:flex-row items-stretch justify-between gap-2">
+                        <div class="cicd-stage flex-1 p-4 bg-white rounded-lg border-2 border-slate-200 text-center" data-stage="test">
+                            <div class="text-2xl">🧪</div><div class="font-semibold mt-2">1. Test & Scan</div>
+                        </div>
+                        <div class="cicd-stage flex-1 p-4 bg-white rounded-lg border-2 border-slate-200 text-center" data-stage="build">
+                            <div class="text-2xl">📦</div><div class="font-semibold mt-2">2. Build & Containerize</div>
+                        </div>
+                        <div class="cicd-stage flex-1 p-4 bg-white rounded-lg border-2 border-slate-200 text-center" data-stage="deploy">
+                            <div class="text-2xl">🚀</div><div class="font-semibold mt-2">3. Canary Deploy</div>
+                        </div>
+                    </div>
+                    <div id="cicd-details" class="mt-6 p-4 bg-slate-50 rounded-md min-h-[100px] transition-all">
+                        <p class="text-slate-600">Select a stage above to view details.</p>
+                    </div>
+                 </div>
+                 <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Observability: The Three Pillars</h3>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                             <h4 class="font-semibold">Metrics</h4>
+                             <p class="text-sm text-slate-600 mt-1"><span class="font-bold">Tools:</span> Prometheus + Grafana</p>
+                             <p class="text-sm text-slate-600 mt-1">Time-series data on system health (CPU, memory, request rates).</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                              <h4 class="font-semibold">Tracing</h4>
+                              <p class="text-sm text-slate-600 mt-1"><span class="font-bold">Tools:</span> OpenTelemetry + Jaeger</p>
+                              <p class="text-sm text-slate-600 mt-1">Follows a single request across multiple services to find bottlenecks.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-lg">
+                              <h4 class="font-semibold">Logging</h4>
+                              <p class="text-sm text-slate-600 mt-1"><span class="font-bold">Tools:</span> Loki + Promtail</p>
+                              <p class="text-sm text-slate-600 mt-1">Cost-effective log aggregation, indexed by metadata, not full content.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+             <!-- Testing Section -->
+            <section id="testing" class="content-section space-y-12">
+                 <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Testing & Quality Assurance</h2>
+                     <p class="mt-2 text-lg text-slate-600 max-w-3xl">A rigorous, automated testing strategy ensures the platform is reliable, performant, and accessible. The strategy follows the testing pyramid and includes specialized load and accessibility testing.</p>
+                </div>
+                 <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">The Testing Pyramid</h3>
+                     <div class="flex flex-col items-center">
+                         <div class="w-full max-w-md">
+                             <div class="bg-red-200 text-red-800 text-center font-semibold py-3 px-4 rounded-t-lg">E2E Tests (Playwright)</div>
+                             <div class="bg-yellow-200 text-yellow-800 text-center font-semibold py-6 px-4">Integration Tests</div>
+                             <div class="bg-green-200 text-green-800 text-center font-semibold py-10 px-4 rounded-b-lg">Unit Tests (Jest, Go testing)</div>
+                         </div>
+                         <p class="text-slate-600 mt-4 text-center max-w-xl">The strategy relies on a large base of fast, cheap unit tests, a smaller layer of integration tests, and a minimal number of slow but valuable end-to-end tests to ensure comprehensive coverage efficiently.</p>
+                     </div>
+                </div>
+                 <div class="grid md:grid-cols-2 gap-8">
+                      <div class="card rounded-lg p-6">
+                         <h3 class="text-xl font-semibold mb-4">Load Testing with k6</h3>
+                         <p class="text-slate-600">To ensure the platform can handle thousands of concurrent users, regular load testing will be conducted using k6. Its developer-friendly workflow and high performance make it ideal for simulating realistic user traffic and preventing performance regressions.</p>
+                     </div>
+                      <div class="card rounded-lg p-6">
+                         <h3 class="text-xl font-semibold mb-4">Accessibility (a11y)</h3>
+                         <p class="text-slate-600">Automated checks using <span class="font-semibold">axe-core</span> and <span class="font-semibold">pa11y</span> will be integrated into the CI pipeline, supplemented by regular manual audits to ensure WCAG compliance and usability for all.</p>
+                     </div>
+                 </div>
+            </section>
+
+            <!-- Governance Section -->
+            <section id="governance" class="content-section space-y-12">
+                <div>
+                    <h2 class="text-3xl font-bold text-slate-900">Project Governance & Roadmap</h2>
+                    <p class="mt-2 text-lg text-slate-600 max-w-3xl">A clear plan, a cross-functional Agile team, and efficient collaboration processes are essential to executing the technical vision effectively.</p>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">MVP Feature Set</h3>
+                    <p class="text-slate-600 mb-4">The initial launch will be a Minimum Viable Product (MVP) focused on solving the core user problem. This accelerates time-to-market and allows the product to evolve based on real user feedback.</p>
+                    <ul class="grid md:grid-cols-2 gap-4 list-none p-0">
+                        <li class="flex items-start space-x-3 p-3 bg-slate-50 rounded-md"><span class="text-green-500 font-bold">✓</span><span>Secure sign-up/login for customers and providers.</span></li>
+                        <li class="flex items-start space-x-3 p-3 bg-slate-50 rounded-md"><span class="text-green-500 font-bold">✓</span><span>Admin dashboard to manage offerings and availability.</span></li>
+                        <li class="flex items-start space-x-3 p-3 bg-slate-50 rounded-md"><span class="text-green-500 font-bold">✓</span><span>Customer flow to browse, select, and book.</span></li>
+                        <li class="flex items-start space-x-3 p-3 bg-slate-50 rounded-md"><span class="text-green-500 font-bold">✓</span><span>Automated email notifications for key events.</span></li>
+                        <li class="flex items-start space-x-3 p-3 bg-slate-50 rounded-md"><span class="text-green-500 font-bold">✓</span><span>Stripe integration for payment processing.</span></li>
+                    </ul>
+                </div>
+                <div class="card rounded-lg p-6">
+                    <h3 class="text-xl font-semibold mb-4">Agile Team Structure</h3>
+                    <p class="text-slate-600 mb-4">The project will be run by a cross-functional Agile team, promoting autonomy and rapid iteration. Key roles include the Product Owner, Scrum Master, and a development team comprising UX/UI, Frontend, Backend, QA, and DevOps specialists.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('#main-nav a');
+            const sections = document.querySelectorAll('.content-section');
+            const tradeOffButtons = document.querySelectorAll('.tradeoff-btn');
+            const cicdStages = document.querySelectorAll('.cicd-stage');
+            const cicdDetails = document.getElementById('cicd-details');
+
+            const data = {
+                tradeoffs: {
+                    monolith: {
+                        labels: ['Dev Velocity', 'Ops Complexity', 'Initial Cost', 'Scalability', 'Fault Isolation'],
+                        values: [9, 2, 2, 5, 3],
+                        explanation: 'The Modular Monolith provides high initial development velocity and low operational complexity, making it ideal for a startup aiming for a fast time-to-market.'
+                    },
+                    microservices: {
+                        labels: ['Dev Velocity', 'Ops Complexity', 'Initial Cost', 'Scalability', 'Fault Isolation'],
+                        values: [4, 9, 8, 9, 9],
+                        explanation: 'Microservices offer superior scalability and fault isolation, but come with high operational complexity and initial cost, making them better suited for mature products with large teams.'
+                    }
+                },
+                cicd: {
+                    test: {
+                        title: 'Stage 1: Test & Automated Scan',
+                        details: 'Code is linted for style and quality. Fast-running unit tests (Jest, Go testing) verify individual components. Security is shifted left by integrating <strong>Snyk</strong> to automatically scan dependencies and container images for vulnerabilities.'
+                    },
+                    build: {
+                        title: 'Stage 2: Build & Containerize',
+                        details: 'The application is compiled, and a versioned, immutable Docker image is built. This artifact is then pushed to a central repository like <strong>Google Artifact Registry</strong>, ready for deployment.'
+                    },
+                    deploy: {
+                        title: 'Stage 3: Progressive Canary Deploy',
+                        details: 'The new version is deployed to production using a Canary strategy, orchestrated by <strong>Istio</strong>. Traffic is gradually shifted (e.g., 1%, 10%, 50%) while monitoring metrics from <strong>Prometheus</strong>. If any issues are detected, the rollout is automatically reversed with minimal user impact.'
+                    }
+                }
+            };
+            
+            // Navigation
+            const handleNav = () => {
+                const hash = window.location.hash || '#architecture';
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.hash === hash);
+                });
+                sections.forEach(section => {
+                    section.classList.toggle('active', `#${section.id}` === hash);
+                });
+            };
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                     // e.preventDefault();
+                     window.location.hash = e.currentTarget.hash;
+                });
+            });
+
+            window.addEventListener('hashchange', handleNav);
+            handleNav(); // Initial load
+            
+            // Architecture Evolution Diagram
+            const evolveBtn = document.getElementById('evolve-btn');
+            const phase2 = document.getElementById('evolution-phase2');
+            evolveBtn.addEventListener('click', () => {
+                phase2.classList.remove('hidden');
+                setTimeout(() => phase2.classList.remove('opacity-0'), 10);
+                evolveBtn.textContent = 'Evolution Shown';
+                evolveBtn.disabled = true;
+            });
+
+
+            // Tradeoff Chart
+            let tradeoffChart;
+            const initTradeoffChart = () => {
+                const ctx = document.getElementById('tradeoffChart').getContext('2d');
+                tradeoffChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.tradeoffs.monolith.labels,
+                        datasets: [{
+                            label: 'Score (out of 10)',
+                            data: data.tradeoffs.monolith.values,
+                            backgroundColor: 'rgba(30, 58, 138, 0.6)',
+                            borderColor: 'rgba(30, 58, 138, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                max: 10,
+                                grid: { display: false }
+                            },
+                            y: {
+                                grid: { color: '#e5e7eb' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}/10`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            };
+
+            tradeOffButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const type = button.dataset.type;
+                    tradeOffButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    tradeoffChart.data.datasets[0].data = data.tradeoffs[type].values;
+                    tradeoffChart.update();
+                    document.getElementById('tradeoff-explanation').textContent = data.tradeoffs[type].explanation;
+                });
+            });
+
+            // Frontend Performance Chart
+            const initFrameworkPerfChart = () => {
+                const ctx = document.getElementById('frameworkPerfChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['SvelteKit', 'React (Next.js)', 'Vue (Nuxt)'],
+                        datasets: [{
+                            label: 'Bundle Size (kB, smaller is better)',
+                            data: [15, 75, 65],
+                            backgroundColor: 'rgba(2, 132, 199, 0.6)',
+                        }, {
+                            label: 'Runtime Perf (score, higher is better)',
+                            data: [98, 85, 88],
+                            backgroundColor: 'rgba(219, 39, 119, 0.6)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } },
+                         plugins: {
+                            title: { display: true, text: 'Framework Performance Comparison' }
+                        }
+                    }
+                });
+            };
+            
+            // Database Chart
+            const initDatabaseChart = () => {
+                const ctx = document.getElementById('databaseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['ACID Transactions', 'Horizontal Scale', 'Geo-Distribution', 'Schema Flexibility', 'Ease of Use'],
+                        datasets: [{
+                            label: 'CockroachDB',
+                            data: [10, 10, 9, 7, 8],
+                            fill: true,
+                            backgroundColor: 'rgba(30, 58, 138, 0.2)',
+                            borderColor: 'rgb(30, 58, 138)',
+                            pointBackgroundColor: 'rgb(30, 58, 138)',
+                        }, {
+                            label: 'PostgreSQL',
+                            data: [10, 3, 2, 9, 9],
+                             fill: true,
+                            backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                            borderColor: 'rgb(34, 197, 94)',
+                            pointBackgroundColor: 'rgb(34, 197, 94)',
+                        }, {
+                            label: 'MongoDB',
+                            data: [4, 9, 8, 10, 7],
+                            fill: true,
+                            backgroundColor: 'rgba(217, 119, 6, 0.2)',
+                            borderColor: 'rgb(217, 119, 6)',
+                            pointBackgroundColor: 'rgb(217, 119, 6)',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                             title: { display: true, text: 'Database Capability Comparison' }
+                        }
+                    }
+                });
+            };
+
+            // CICD Pipeline
+            cicdStages.forEach(stage => {
+                stage.addEventListener('click', () => {
+                    const stageKey = stage.dataset.stage;
+                    cicdStages.forEach(s => s.classList.remove('active'));
+                    stage.classList.add('active');
+
+                    const stageData = data.cicd[stageKey];
+                    cicdDetails.innerHTML = `
+                        <h4 class="font-semibold text-lg mb-2">${stageData.title}</h4>
+                        <p class="text-slate-700">${stageData.details}</p>
+                    `;
+                });
+            });
+
+
+            // Initialize all charts
+            if (document.getElementById('tradeoffChart')) initTradeoffChart();
+            if (document.getElementById('frameworkPerfChart')) initFrameworkPerfChart();
+            if (document.getElementById('databaseChart')) initDatabaseChart();
+        });
+    </script>
+</body>
+</html>
